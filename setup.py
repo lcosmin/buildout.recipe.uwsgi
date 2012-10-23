@@ -11,6 +11,7 @@ setup(
     url='http://github.com/lcosmin/buildout.recipe.uwsgi',
     packages = find_packages(),
     include_package_data=True,
+    namespace_packages=['buildout'],
     classifiers = [
         "Programming Language :: Python",
         "License :: OSI Approved :: BSD License",
