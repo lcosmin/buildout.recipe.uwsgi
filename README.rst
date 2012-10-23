@@ -28,7 +28,7 @@ Add a part to your ``buildout.cfg`` like so::
     parts=uwsgi
 
     [uwsgi]
-    recipe=shaunsephton.recipe.uwsgi
+    recipe=buildout.recipe.uwsgi
 
 Running the buildout will download and compile uWSGI_ and add an executable with the same name as your part in the ``bin/`` directory. In this case ``bin/uwsgi``. It will also create a ``uwsgi.xml`` configuration file in a ``parts`` directory with the same name as your part. In this case ``bin/uwsgi/uwsgi.xml``.
 
@@ -44,10 +44,11 @@ You can specify any and all additional uWSGI_ configuration options as additiona
     parts=uwsgi
 
     [uwsgi]
-    recipe=shaunsephton.recipe.uwsgi
+    recipe=buildout.recipe.uwsgi
     socket=127.0.0.1:7001
     module=my_uwsgi_package.wsgi
     master=True
+    version=1.2.5
 
 
 You can also provided a set of eggs explicitly using the ``eggs`` option, i.e.::
@@ -56,7 +57,7 @@ You can also provided a set of eggs explicitly using the ``eggs`` option, i.e.::
     parts=uwsgi
 
     [uwsgi]
-    recipe=shaunsephton.recipe.uwsgi
+    recipe=buildout.recipe.uwsgi
     eggs=my_uwsgi_package
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
