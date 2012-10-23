@@ -16,6 +16,7 @@ class UWSGI:
         self.egg = zc.recipe.egg.Egg(buildout, options['recipe'], options)
         self.name = name
         self.buildout = buildout
+        self.version = options.get('uwsgi-version', 'latest')
 
         if 'extra-paths' in options:
             options['pythonpath'] = options['extra-paths']
@@ -40,7 +41,7 @@ class UWSGI:
         """
         cache = tempfile.mkdtemp('download-cache')
         download = Download(cache=cache)
-        download_path, is_temp = download('http://projects.unbit.it/downloads/uwsgi-latest.tar.gz')
+        download_path, is_temp = download('http://projects.unbit.it/downloads/uwsgi-%s.tar.gz' % self.version)
         return download_path
 
     def extract_release(self, download_path):
