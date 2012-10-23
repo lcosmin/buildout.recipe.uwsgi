@@ -1,5 +1,8 @@
-shaunsephton.recipe.uwsgi
-=========================
+buildout.recipe.uwsgi
+=====================
+
+Forked from https://github.com/shaunsephton/shaunsephton.recipe.uwsgi
+
     
 **Buildout recipe downloading, compiling and configuring uWSGI.**
 
@@ -7,6 +10,14 @@ Creates a ``bin/`` uWSGI_ executable and ``parts`` XML configuration file with w
 
 .. contents:: Contents
     :depth: 5
+
+
+Changelog
+---------
+
+0.0.10
+    Added the version option to allow downloading a specific version of ``uwsgi``
+
 
 Usage
 -----
