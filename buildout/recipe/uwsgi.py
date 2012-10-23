@@ -16,7 +16,7 @@ class UWSGI:
         self.egg = zc.recipe.egg.Egg(buildout, options['recipe'], options)
         self.name = name
         self.buildout = buildout
-        self.version = options.get('uwsgi-version', 'latest')
+        self.version = options.get('version', 'latest')
 
         if 'extra-paths' in options:
             options['pythonpath'] = options['extra-paths']
