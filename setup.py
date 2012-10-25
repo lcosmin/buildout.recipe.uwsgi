@@ -23,6 +23,7 @@ setup(
     ],
     install_requires = [
         'zc.recipe.egg',
+        'setuptools'
     ],
     zip_safe=False,
     entry_points = {'zc.buildout': ['default = buildout.recipe.uwsgi:UWSGI']},
