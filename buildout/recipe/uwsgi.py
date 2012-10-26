@@ -51,7 +51,7 @@ class UWSGI:
         Extracts uWSGI package and returns path containing uwsgiconfig.py along with path to extraction root.
         """
         uwsgi_path = None
-        extract_path = tempfile.mkdtemp("-uwsgi")
+        extract_path = tempfile.mkdtemp('-uwsgi')
         setuptools.archive_util.unpack_archive(download_path, extract_path)
         for root, dirs, files in os.walk(extract_path):
             if 'uwsgiconfig.py' in files:
@@ -109,10 +109,10 @@ class UWSGI:
                 pth_libs = site.addsitedir(pth_file, set())
                 if not pth_libs:
                     self.log.warning(
-                        "No site *.pth libraries found for pth_file=%s" % (
+                        'No site *.pth libraries found for pth_file=%s' % (
                          pth_file,))
                 else:
-                    self.log.info("Adding *.pth libraries=%s" % pth_libs)
+                    self.log.info('Adding *.pth libraries=%s' % pth_libs)
                     self.options['extra-paths'] += '\n' + '\n'.join(pth_libs)
 
         # Add local extra-paths.
@@ -147,17 +147,17 @@ class UWSGI:
             if key.startswith('xml-') and len(key) > 4:
                 key = key[4:]
                 if value.lower() == 'true':
-                    conf += "<%s/>\n" % key
+                    conf += '<%s/>\n' % key
                 elif value and value.lower() != 'false':
-                    conf += "<%s>%s</%s>\n" % (key, value, key)
+                    conf += '<%s>%s</%s>\n' % (key, value, key)
 
         requirements, ws = self.egg.working_set()
         paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
         for path in paths:
-            conf += "<pythonpath>%s</pythonpath>\n" % path
+            conf += '<pythonpath>%s</pythonpath>\n' % path
 
         f = open(xml_path, 'w')
-        f.write("<uwsgi>\n%s</uwsgi>" % conf)
+        f.write('<uwsgi>\n%s</uwsgi>' % conf)
         f.close()
         return xml_path
 
