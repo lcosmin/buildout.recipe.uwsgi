@@ -3,6 +3,7 @@ import setuptools
 import shutil
 import sys
 import tempfile
+import logging
 from zc.buildout.download import Download
 import zc
 import zc.recipe.egg
@@ -17,6 +18,7 @@ class UWSGI:
         self.name = name
         self.buildout = buildout
         self.version = options.get('version', 'latest')
+        self.log = logging.getLogger(self.name)
 
         if 'extra-paths' in options:
             options['pythonpath'] = options['extra-paths']
