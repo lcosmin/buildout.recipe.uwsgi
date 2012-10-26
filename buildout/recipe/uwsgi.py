@@ -34,7 +34,7 @@ class UWSGI:
             elif key.startswith('_'):
                 continue
             self.conf[key] = options.get(key, None)
-            
+
         self.options = options
 
     def download_release(self):
@@ -89,10 +89,9 @@ class UWSGI:
         """
         Copy uWSGI executable to bin and return the resulting path.
         """
-        bin_path = os.path.join(self.buildout['buildout']['bin-directory'])
+        bin_path = self.buildout['buildout']['bin-directory']
         shutil.copy(uwsgi_executable_path, bin_path)
-        uwsgi_path = os.path.join(self.buildout['buildout']['bin-directory'])
-        return os.path.join(bin_path, os.path.split(uwsgi_executable_path)[-1])
+        return os.path.join(bin_path, os.path.basename(uwsgi_executable_path))
 
     def get_extra_paths(self):
         """
@@ -180,9 +179,9 @@ class UWSGI:
 
         # Create uWSGI conf xml.
         paths.append(self.create_conf_xml())
-        
+
         return paths
-    
+
     def update(self):
         # Create uWSGI conf xml - the egg set might have changed even if
         # the uwsgi section is unchanged so it's safer to re-generate the xml
