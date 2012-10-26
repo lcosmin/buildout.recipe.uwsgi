@@ -143,11 +143,13 @@ class UWSGI:
 
         conf = ""
         for key, value in self.conf.items():
-            if value.lower() == 'true':
-                conf += "<%s/>\n" % key
-            elif value and value.lower() != 'false':
-                conf += "<%s>%s</%s>\n" % (key, value, key)
-
+            # Configuration items for the XML file are prefixed with "xml-"
+            if key.startswith('xml-') and len(key) > 4:
+                key = key[4:]
+                if value.lower() == 'true':
+                    conf += "<%s/>\n" % key
+                elif value and value.lower() != 'false':
+                    conf += "<%s>%s</%s>\n" % (key, value, key)
 
         requirements, ws = self.egg.working_set()
         paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
