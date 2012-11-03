@@ -94,6 +94,7 @@ class UWSGI:
         Returns extra paths to include for uWSGI.
         TODO: Figure out a more buildouty way to do this.
         """
+        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
         parts_path = self.buildout['buildout']['parts-directory']
         parts_paths = [os.path.join(parts_path, part) for part in os.listdir(parts_path)]
         extra_paths = [self.buildout['buildout']['directory'], ] + parts_paths
