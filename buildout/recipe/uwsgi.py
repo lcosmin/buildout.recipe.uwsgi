@@ -79,9 +79,6 @@ class UWSGI:
 
         # Change back to original path and remove uwsgi_path from Python path if added.
         os.chdir(current_path)
-        if sys_path_changed:
-            sys.path.remove(uwsgi_path)
-
         return os.path.join(uwsgi_path, self.name)
 
     def copy_uwsgi_to_bin(self, uwsgi_executable_path):
