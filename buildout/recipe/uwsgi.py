@@ -71,7 +71,7 @@ class UWSGI:
         # Call make 
         #
         profile = self.options.get('profile', 'default.ini')
-        os.environment['UWSGI_PROFILE'] = profile
+        os.environ['UWSGI_PROFILE'] = profile
         
         subprocess.check_call(['make', '-f', 'Makefile'])
 
