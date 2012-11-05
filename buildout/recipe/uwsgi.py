@@ -80,13 +80,6 @@ class UWSGI:
         return os.path.join(bin_path, os.path.basename(uwsgi_executable_path))
 
     def get_extra_paths(self):
-        """
-        Returns extra paths to include for uWSGI.
-        TODO: Figure out a more buildouty way to do this.
-        """
-        parts_path = self.buildout['buildout']['parts-directory']
-        parts_paths = [os.path.join(parts_path, part) for part in os.listdir(parts_path)]
-        extra_paths = [self.buildout['buildout']['directory'], ] + parts_paths
 
         # Add libraries found by a site .pth files to our extra-paths.
         if 'pth-files' in self.options:
@@ -102,18 +95,9 @@ class UWSGI:
                     self.options['extra-paths'] += '\n' + '\n'.join(pth_libs)
 
         # Add local extra-paths.
-        pythonpath = [p.replace('/', os.path.sep) for p in
-                      self.options['extra-paths'].splitlines() if p.strip()]
+        return [p.replace('/', os.path.sep) for p in
+                self.options['extra-paths'].splitlines() if p.strip()]
 
-        extra_paths.extend(pythonpath)
-
-        # Add global extra-paths
-        buildout_extra_paths = self.buildout['buildout'].get('extra-paths', None)
-        if buildout_extra_paths:
-            pythonpath = [p.replace('/', os.path.sep) for p in buildout_extra_paths.splitlines() if p.strip()]
-            extra_paths.extend(pythonpath)
-
-        return extra_paths
 
     def create_conf_xml(self):
         """
