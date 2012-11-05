@@ -16,9 +16,10 @@ Changelog
 ---------
 
 0.0.10
-    Added the version option to allow downloading a specific version of ``uwsgi``
-    Added the possibility of specifying a certain build profile
-    Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed 
+ 
+ * Added the version option to allow downloading a specific version of ``uwsgi``
+ * Added the possibility of specifying a certain build profile
+ * Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed 
 
 
 
@@ -39,29 +40,19 @@ This allows you to start a uWSGI_ process configured by the generated XML file, 
 
     $ ./bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 
-The generated XML configuration includes ``pythonpath`` directives referencing the various Python eggs installed by Buildout allowing uWSGI_ to utilize them.
 
-You can specify any and all additional uWSGI_ configuration options as additional options of the Buildout part. For instance to specify a socket and module and to enable the master process add ``socket``, ``module`` and ``master`` options to the buildout part, i.e.::
+You can specify any and all additional uWSGI_ configuration options as additional options of the Buildout part. These should be prefixed with ``xml-``. For instance to specify a socket and module and to enable the master process add ``xml-socket``, ``xml-module`` and ``xml-master`` options to the buildout part, i.e.::
 
     [buildout]
     parts=uwsgi
 
     [uwsgi]
     recipe=buildout.recipe.uwsgi
-    socket=127.0.0.1:7001
-    module=my_uwsgi_package.wsgi
-    master=True
     version=1.2.5
-
-
-You can also provided a set of eggs explicitly using the ``eggs`` option, i.e.::
-
-    [buildout]
-    parts=uwsgi
-
-    [uwsgi]
-    recipe=buildout.recipe.uwsgi
-    eggs=my_uwsgi_package
+    xml-socket=127.0.0.1:7001
+    xml-module=my_uwsgi_package.wsgi
+    xml-master=True
+    
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
 
