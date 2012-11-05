@@ -26,16 +26,6 @@ class UWSGI:
         else:
             options.setdefault('extra-paths', options.get('pythonpath', ''))
 
-        # Collect configuration params from options.
-        #self.conf = {}
-        #for key in options:
-        #    # XXX: Excludes buildout fluff. This code sucks, there must be a better way.
-        #    if key in ('bin-directory', 'develop-eggs-directory', 'eggs', 'eggs-directory', 'executable', 'extra-paths', 'python', 'recipe'):
-        #        continue
-        #    elif key.startswith('_'):
-        #        continue
-        #    self.conf[key] = options.get(key, None)
-
         self.options = options
 
     def download_release(self):
@@ -94,7 +84,6 @@ class UWSGI:
         Returns extra paths to include for uWSGI.
         TODO: Figure out a more buildouty way to do this.
         """
-        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
         parts_path = self.buildout['buildout']['parts-directory']
         parts_paths = [os.path.join(parts_path, part) for part in os.listdir(parts_path)]
         extra_paths = [self.buildout['buildout']['directory'], ] + parts_paths
@@ -146,7 +135,11 @@ class UWSGI:
                 if value.lower() == 'true':
                     conf += '<%s/>\n' % key
                 elif value and value.lower() != 'false':
-                    conf += '<%s>%s</%s>\n' % (key, value, key)
+                    if '\n' in value:
+                        for subvalue in value.split():
+                            conf += "<%s>%s</%s>\n" % (key, subvalue, key)
+                    else:
+                        conf += '<%s>%s</%s>\n' % (key, value, key)
 
         requirements, ws = self.egg.working_set()
         paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
