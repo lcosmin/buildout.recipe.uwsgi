@@ -1,30 +1,26 @@
 buildout.recipe.uwsgi
 =====================
 
-Forked from https://github.com/shaunsephton/shaunsephton.recipe.uwsgi
+This is a `zc.buildout <http://www.buildout.org/>`_ recipe for downloading and installing uWSGI_ inside a buildout. 
+Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsephton.recipe.uwsgi>`_
 
-    
-**Buildout recipe downloading, compiling and configuring uWSGI.**
-
-Creates a ``bin/`` uWSGI_ executable and ``parts`` XML configuration file with which you can easily launch Buildout sandboxed uWSGI_ processes.
-
-.. contents:: Contents
-    :depth: 5
+Creates a ``bin/`` uWSGI_ executable and ``parts`` XML configuration file with which you can easily launch Buildout 
+sandboxed uWSGI_ processes.
 
 
 Changelog
----------
+=========
 
 0.0.10
  
- * Added the version option to allow downloading a specific version of ``uwsgi``
- * Added the possibility of specifying a certain build profile
- * Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed 
+* Added the version option to allow downloading a specific version of ``uwsgi``
+* Added the possibility of specifying a certain build profile
+* Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed 
 
 
 
 Usage
------
+=====
 
 Add a part to your ``buildout.cfg`` like so::
 
