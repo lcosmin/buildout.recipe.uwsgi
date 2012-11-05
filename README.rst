@@ -17,6 +17,9 @@ Changelog
 
 0.0.10
     Added the version option to allow downloading a specific version of ``uwsgi``
+    Added the possibility of specifying a certain build profile
+    Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed 
+
 
 
 Usage

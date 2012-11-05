@@ -1,4 +1,5 @@
 import os
+import subprocess
 import setuptools
 import shutil
 import sys
@@ -7,6 +8,7 @@ import logging
 from zc.buildout.download import Download
 import zc
 import zc.recipe.egg
+
 
 class UWSGI:
     """
@@ -17,23 +19,12 @@ class UWSGI:
         self.egg = zc.recipe.egg.Egg(buildout, options['recipe'], options)
         self.name = name
         self.buildout = buildout
-        self.version = options.get('version', 'latest')
         self.log = logging.getLogger(self.name)
 
         if 'extra-paths' in options:
             options['pythonpath'] = options['extra-paths']
         else:
             options.setdefault('extra-paths', options.get('pythonpath', ''))
-
-        # Collect configuration params from options.
-        self.conf = {}
-        for key in options:
-            # XXX: Excludes buildout fluff. This code sucks, there must be a better way.
-            if key in ('bin-directory', 'develop-eggs-directory', 'eggs', 'eggs-directory', 'executable', 'extra-paths', 'python', 'recipe'):
-                continue
-            elif key.startswith('_'):
-                continue
-            self.conf[key] = options.get(key, None)
 
         self.options = options
 
@@ -43,7 +34,7 @@ class UWSGI:
         """
         cache = tempfile.mkdtemp('download-cache')
         download = Download(cache=cache)
-        download_path, is_temp = download('http://projects.unbit.it/downloads/uwsgi-%s.tar.gz' % self.version)
+        download_path, is_temp = download('http://projects.unbit.it/downloads/uwsgi-%s.tar.gz' % self.options.get('version', 'latest'))
         return download_path
 
     def extract_release(self, download_path):
@@ -66,23 +57,18 @@ class UWSGI:
         current_path = os.getcwd()
         os.chdir(uwsgi_path)
 
-        # Add uwsgi_path to the Python path so we can import uwsgiconfig.
-        if uwsgi_path not in sys.path:
-            sys.path.append(uwsgi_path)
-            sys_path_changed = True
+        #
+        # Set the environment
+        # Call make 
+        #
+        profile = self.options.get('profile', 'default.ini')
+        os.environ['UWSGI_PROFILE'] = profile
+        
+        subprocess.check_call(['make', '-f', 'Makefile'])
 
-        # Build uWSGI.
-        uwsgiconfig = __import__('uwsgiconfig')
-        bconf = '%s/buildconf/default.ini' % uwsgi_path
-        uconf = uwsgiconfig.uConf(bconf)
-        uconf.set('bin_name', self.name)
-        uwsgiconfig.build_uwsgi(uconf)
 
         # Change back to original path and remove uwsgi_path from Python path if added.
         os.chdir(current_path)
-        if sys_path_changed:
-            sys.path.remove(uwsgi_path)
-
         return os.path.join(uwsgi_path, self.name)
 
     def copy_uwsgi_to_bin(self, uwsgi_executable_path):
@@ -100,7 +86,7 @@ class UWSGI:
         """
         parts_path = self.buildout['buildout']['parts-directory']
         parts_paths = [os.path.join(parts_path, part) for part in os.listdir(parts_path)]
-        extra_paths = [self.buildout['buildout']['directory'],] + parts_paths
+        extra_paths = [self.buildout['buildout']['directory'], ] + parts_paths
 
         # Add libraries found by a site .pth files to our extra-paths.
         if 'pth-files' in self.options:
@@ -142,14 +128,18 @@ class UWSGI:
         xml_path = os.path.join(path, 'uwsgi.xml')
 
         conf = ""
-        for key, value in self.conf.items():
+        for key, value in self.options.items():
             # Configuration items for the XML file are prefixed with "xml-"
             if key.startswith('xml-') and len(key) > 4:
                 key = key[4:]
                 if value.lower() == 'true':
                     conf += '<%s/>\n' % key
                 elif value and value.lower() != 'false':
-                    conf += '<%s>%s</%s>\n' % (key, value, key)
+                    if '\n' in value:
+                        for subvalue in value.split():
+                            conf += "<%s>%s</%s>\n" % (key, subvalue, key)
+                    else:
+                        conf += '<%s>%s</%s>\n' % (key, value, key)
 
         requirements, ws = self.egg.working_set()
         paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
