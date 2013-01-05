@@ -59,11 +59,11 @@ class UWSGI:
 
         #
         # Set the environment
-        # Call make 
+        # Call make
         #
         profile = self.options.get('profile', 'default.ini')
         os.environ['UWSGI_PROFILE'] = profile
-        
+
         subprocess.check_call(['make', '-f', 'Makefile'])
 
 
@@ -137,21 +137,23 @@ class UWSGI:
 
     def install(self):
         paths = []
-        if not os.path.exists(os.path.join(self.buildout['buildout']['bin-directory'], self.name)):
-            # Download uWSGI.
-            download_path = self.download_release()
 
-            #Extract uWSGI.
-            uwsgi_path, extract_path = self.extract_release(download_path)
+        if self.options.get('use-system-binary', False):
+            if not os.path.exists(os.path.join(self.buildout['buildout']['bin-directory'], self.name)):
+                # Download uWSGI.
+                download_path = self.download_release()
 
-            # Build uWSGI.
-            uwsgi_executable_path = self.build_uwsgi(uwsgi_path)
+                #Extract uWSGI.
+                uwsgi_path, extract_path = self.extract_release(download_path)
 
-            # Copy uWSGI to bin.
-            paths.append(self.copy_uwsgi_to_bin(uwsgi_executable_path))
+                # Build uWSGI.
+                uwsgi_executable_path = self.build_uwsgi(uwsgi_path)
 
-            # Remove extracted uWSGI package.
-            shutil.rmtree(extract_path)
+                # Copy uWSGI to bin.
+                paths.append(self.copy_uwsgi_to_bin(uwsgi_executable_path))
+
+                # Remove extracted uWSGI package.
+                shutil.rmtree(extract_path)
 
         # Create uWSGI conf xml.
         paths.append(self.create_conf_xml())
