@@ -11,6 +11,10 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.11
+
+* New option, use-system-binary, to skip building uwsgi
+
 0.0.10
 
 * Added the version option to allow downloading a specific version of ``uwsgi``
@@ -36,13 +40,13 @@ This allows you to start a uWSGI_ process configured by the generated XML file, 
 
     $ ./bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 
-It is also possible to use an "external" uwsgi binary (installed by the means of the OS package manager or compiled manually) and just let the recipe to generate the xml file with settings:
+It is also possible to use an "external" uwsgi binary (installed by the means of the OS package manager or compiled manually) and just let the recipe to generate the xml file with settings::
 
     [uwsgi]
     recipe=buildout.recipe.uwsgi
     use-system-binary = True
 
-And then run it with
+And then run it with::
 
     $ /usr/bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 
