@@ -66,10 +66,8 @@ class UWSGI:
 
         subprocess.check_call(['make', '-f', 'Makefile'])
 
-
-        # Change back to original path and remove uwsgi_path from Python path if added.
         os.chdir(current_path)
-        return os.path.join(uwsgi_path, self.name)
+        return os.path.join(uwsgi_path, "uwsgi")
 
     def copy_uwsgi_to_bin(self, uwsgi_executable_path):
         """
@@ -126,8 +124,8 @@ class UWSGI:
                         conf += '<%s>%s</%s>\n' % (key, value, key)
 
         requirements, ws = self.egg.working_set()
-        paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
-        for path in paths:
+        #paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
+        for path in ws.entries:
             conf += '<pythonpath>%s</pythonpath>\n' % path
 
         f = open(xml_path, 'w')
@@ -139,7 +137,7 @@ class UWSGI:
         paths = []
 
         if self.options.get('use-system-binary', False):
-            if not os.path.exists(os.path.join(self.buildout['buildout']['bin-directory'], self.name)):
+            if not os.path.exists(os.path.join(self.buildout['buildout']['bin-directory'], "uwsgi")):
                 # Download uWSGI.
                 download_path = self.download_release()
 
