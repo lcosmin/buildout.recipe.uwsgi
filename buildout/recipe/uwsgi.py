@@ -136,7 +136,7 @@ class UWSGI:
     def install(self):
         paths = []
 
-        if self.options.get('use-system-binary', False):
+        if not self.options.get('use-system-binary', False):
             if not os.path.exists(os.path.join(self.buildout['buildout']['bin-directory'], "uwsgi")):
                 # Download uWSGI.
                 download_path = self.download_release()

@@ -11,6 +11,11 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.12
+
+* Fixed a bug when using 'use-system-binary' (was working backwards)
+* Fixed build process when the part's name was something other than 'uwsgi' 
+
 0.0.11
 
 * New option, use-system-binary, to skip building uwsgi
