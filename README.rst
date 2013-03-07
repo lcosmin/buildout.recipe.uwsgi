@@ -11,6 +11,10 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.13
+
+* Minor code/documentation cleanups
+
 0.0.12
 
 * Fixed a bug when using 'use-system-binary' (was working backwards)
@@ -66,6 +70,29 @@ You can specify any and all additional uWSGI_ configuration options as additiona
     xml-socket=127.0.0.1:7001
     xml-module=my_uwsgi_package.wsgi
     xml-master=True
+
+
+Authors
+=======
+
+Created By
+----------
+
+#. Shaun Sephton
+
+
+Fork Maintainer
+---------------
+
+#. Cosmin Luță `lcosmin <https://github.com/lcosmin>`_
+
+
+Contributors
+------------
+
+#. `mooball <https://github.com/mooball>`_
+#. `thefunny42 <https://github.com/thefunny42>`_
+#. `rage2000 <https://github.com/rage2000>`_
 
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc

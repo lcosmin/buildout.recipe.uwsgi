@@ -5,7 +5,7 @@ setup(
     name="buildout.recipe.uwsgi",
     version="0.0.13",
     description="Buildout recipe downloading, compiling and configuring uWSGI.",
-    long_description = open("README.rst", "r").read() + open("AUTHORS.rst", "r").read() + open("CHANGELOG.rst", "r").read(),
+    long_description = open("README.rst", "r").read(),
     author="Cosmin Luță",
     author_email="q4break@gmail.com",
     license="BSD",
