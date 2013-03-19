@@ -77,6 +77,25 @@ class UWSGI:
         shutil.copy(uwsgi_executable_path, bin_path)
         return os.path.join(bin_path, os.path.basename(uwsgi_executable_path))
 
+    def get_extra_paths(self):
+
+        # Add libraries found by a site .pth files to our extra-paths.
+        if 'pth-files' in self.options:
+            import site
+            for pth_file in self.options['pth-files'].splitlines():
+                pth_libs = site.addsitedir(pth_file, set())
+                if not pth_libs:
+                    self.log.warning(
+                        'No site *.pth libraries found for pth_file=%s' % (
+                        pth_file,))
+                else:
+                    self.log.info('Adding *.pth libraries=%s' % pth_libs)
+                    self.options['extra-paths'] += '\n' + '\n'.join(pth_libs)
+
+        # Add local extra-paths.
+        return [p.replace('/', os.path.sep) for p in
+                self.options['extra-paths'].splitlines() if p.strip()]
+
     def create_conf_xml(self):
         """
         Create xml file file with which to run uwsgi.
@@ -107,10 +126,12 @@ class UWSGI:
         #paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
         for path in ws.entries:
             conf += "<pythonpath>%s</pythonpath>\n" % path
+        for path in self.get_extra_paths():
+            conf += "<pythonpath>%s</pythonpath>\n" % path
 
         with open(xml_path, "w") as f:
             f.write("<uwsgi>\n%s</uwsgi>" % conf)
-        
+
         return xml_path
 
     def install(self):
