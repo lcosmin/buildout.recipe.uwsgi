@@ -11,6 +11,10 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.14
+
+* extra-paths fixes
+
 0.0.13
 
 * Minor code/documentation cleanups
@@ -18,7 +22,7 @@ Changelog
 0.0.12
 
 * Fixed a bug when using 'use-system-binary' (was working backwards)
-* Fixed build process when the part's name was something other than 'uwsgi' 
+* Fixed build process when the part's name was something other than 'uwsgi'
 
 0.0.11
 
