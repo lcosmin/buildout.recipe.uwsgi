@@ -43,7 +43,7 @@ Changelog
 Usage
 =====
 
-Add a part to your ``buildout.cfg`` like so::
+Add a part to your ``buildout.cfg`` like this::
 
     [buildout]
     parts=uwsgi
@@ -61,7 +61,7 @@ It is also possible to use an "external" uwsgi binary (installed by the means of
 
     [uwsgi]
     recipe=buildout.recipe.uwsgi
-    use-system-binary = True
+    use-system-binary=True
 
 And then run it with::
 
@@ -79,7 +79,7 @@ You can specify any and all additional uWSGI_ configuration options as additiona
     xml-module=my_uwsgi_package.wsgi
     xml-master=True
 
-The default download url template is ``http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz``. This can be overridden through::
+The default download url for the source tarball is ``http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz`` (``{0}`` gets replaced by the value of ``version``, which defaults to ``latest`` if unspecified). However, this can be overridden through::
 
     [uwsgi]
     recipe = buildout.recipe.uwsgi

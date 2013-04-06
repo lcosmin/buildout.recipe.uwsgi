@@ -10,10 +10,10 @@ setup(
     author_email="q4break@gmail.com",
     license="BSD",
     url="http://github.com/lcosmin/buildout.recipe.uwsgi",
-    packages = find_packages(),
+    packages=find_packages(),
     include_package_data=True,
     namespace_packages=["buildout"],
-    classifiers = [
+    classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: BSD License",
         "Development Status :: 4 - Beta",
@@ -22,10 +22,10 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     ],
-    install_requires = [
+    install_requires=[
         "zc.recipe.egg",
         "setuptools"
     ],
     zip_safe=False,
-    entry_points = {"zc.buildout": ["default = buildout.recipe.uwsgi:UWSGI"]},
+    entry_points={"zc.buildout": ["default = buildout.recipe.uwsgi:UWSGI"]}
 )
