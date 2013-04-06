@@ -11,6 +11,10 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.15
+
+* add option ``download-url`` to configure non-vanilla download url
+
 0.0.14
 
 * extra-paths fixes
