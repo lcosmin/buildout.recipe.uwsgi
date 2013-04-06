@@ -11,6 +11,10 @@ sandboxed uWSGI_ processes.
 Changelog
 =========
 
+0.0.15
+
+* add option ``download-url`` to configure non-vanilla download url
+
 0.0.14
 
 * extra-paths fixes
@@ -75,6 +79,12 @@ You can specify any and all additional uWSGI_ configuration options as additiona
     xml-module=my_uwsgi_package.wsgi
     xml-master=True
 
+The default download url template is ``http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz``. This can be overridden through::
+
+    [uwsgi]
+    recipe = buildout.recipe.uwsgi
+    download-url = http://mirror.example.org/dist/uwsgi-{0}.tar.gz
+
 
 Authors
 =======
@@ -97,6 +107,7 @@ Contributors
 #. `mooball <https://github.com/mooball>`_
 #. `thefunny42 <https://github.com/thefunny42>`_
 #. `rage2000 <https://github.com/rage2000>`_
+#. `Andreas Motl <https://github.com/amotl>`_
 
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
