@@ -34,7 +34,8 @@ class UWSGI:
         """
         cache = tempfile.mkdtemp("download-cache")
         download = Download(cache=cache)
-        download_path, is_temp = download(DOWNLOAD_URL.format(self.options.get("version", "latest")))
+        download_url = self.options.get("download-url", DOWNLOAD_URL)
+        download_path, is_temp = download(download_url.format(self.options.get("version", "latest")))
         return download_path
 
     def extract_release(self, download_path):
