@@ -1,15 +1,18 @@
 buildout.recipe.uwsgi
 =====================
 
-This is a `zc.buildout <http://www.buildout.org/>`_ recipe for downloading and installing uWSGI_ inside a buildout.
-Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsephton.recipe.uwsgi>`_
+This is a `zc.buildout <http://www.buildout.org/>`_ recipe for downloading, installing and configuring uWSGI_ inside a buildout.
+It compiles an uWSGI executable in ``bin/`` and a ``xml`` configuration file in ``parts/``.
 
-Creates a ``bin/`` uWSGI_ executable and ``parts`` XML configuration file with which you can easily launch Buildout
-sandboxed uWSGI_ processes.
+Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsephton.recipe.uwsgi>`_ .
 
 
 Changelog
 =========
+
+0.0.16
+
+* documentation enhancements
 
 0.0.15
 
@@ -39,7 +42,6 @@ Changelog
 * Options that should go in the generated ``.xml`` file should be ``xml-`` prefixed
 
 
-
 Usage
 =====
 
@@ -51,39 +53,46 @@ Add a part to your ``buildout.cfg`` like this::
     [uwsgi]
     recipe=buildout.recipe.uwsgi
 
-Running the buildout will download and compile uWSGI_ and add an executable with the same name as your part in the ``bin/`` directory. In this case ``bin/uwsgi``. It will also create a ``uwsgi.xml`` configuration file in a ``parts`` directory with the same name as your part. In this case ``bin/uwsgi/uwsgi.xml``.
+Running the buildout will download and compile uWSGI and add an executable with the same name as your part in the ``bin/`` directory (e.g. ``bin/uwsgi``). It will also create a ``uwsgi.xml`` configuration file in a ``parts`` directory with the same name as your part (e.g. ``parts/uwsgi/uwsgi.xml``).
 
-This allows you to start a uWSGI_ process configured by the generated XML file, i.e.::
+``uwsgi`` can then be started like::
 
     $ ./bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 
-It is also possible to use an "external" uwsgi binary (installed by the means of the OS package manager or compiled manually) and just let the recipe to generate the xml file with settings::
+Configuration options
+=====================
 
-    [uwsgi]
-    recipe=buildout.recipe.uwsgi
-    use-system-binary=True
+You can specify a number of options for this recipe, for "fine-tuning" the build process. Below is an example of all possible options that can appear in the buildout file::
 
-And then run it with::
-
-    $ /usr/bin/uwsgi --xml parts/uwsgi/uwsgi.xml
-
-You can specify any and all additional uWSGI_ configuration options as additional options of the Buildout part. These should be prefixed with ``xml-``. For instance to specify a socket and module and to enable the master process add ``xml-socket``, ``xml-module`` and ``xml-master`` options to the buildout part, i.e.::
 
     [buildout]
     parts=uwsgi
 
     [uwsgi]
     recipe=buildout.recipe.uwsgi
+    download-url=http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz    
     version=1.2.5
+    profile=default.ini
+    use-system-binary=1
     xml-socket=127.0.0.1:7001
     xml-module=my_uwsgi_package.wsgi
     xml-master=True
 
-The default download url for the source tarball is ``http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz`` (``{0}`` gets replaced by the value of ``version``, which defaults to ``latest`` if unspecified). However, this can be overridden through::
 
-    [uwsgi]
-    recipe = buildout.recipe.uwsgi
-    download-url = http://mirror.example.org/dist/uwsgi-{0}.tar.gz
+download-url
+    Specifies the url where uWSGI's source code should be downloaded from. ``{0}`` inside this url will be replaced by the value of the ``version`` option. The default value of ``download-url`` is ``http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz``
+
+version
+    Version of uWSGI to download (default is ``latest``).
+
+profile
+    uWSGI has profiles (build configurations) which can be used to configure which plugins will be built with uWSGI (see https://github.com/unbit/uwsgi/tree/master/buildconf). Default is ``default.ini``.
+
+use-system-binary
+    It is possible to use an "external" uwsgi binary (installed by the OS' package manager or compiled manually) and just let the recipe generate the xml configuration file only (no building uWsgi). Default is ``False``.
+
+xml-*
+    Any option starting with ``xml-`` will be stripped of this prefix and written to the ``xml`` configuration file; for example, ``xml-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>``.
 
 
 Authors
