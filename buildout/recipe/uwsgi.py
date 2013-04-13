@@ -124,10 +124,19 @@ class UWSGI:
                         conf += "<%s>%s</%s>\n" % (key, value, key)
 
         requirements, ws = self.egg.working_set()
-        #paths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
-        for path in ws.entries:
-            conf += "<pythonpath>%s</pythonpath>\n" % path
-        for path in self.get_extra_paths():
+
+        # get list of paths to put into pythonpath
+        #pythonpaths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
+        pythonpaths = ws.entries + self.get_extra_paths()
+
+        # mungle basedir of pythonpath entries
+        if 'pythonpath-eggs-directory' in self.options:
+            source = self.options['eggs-directory']
+            target = self.options['pythonpath-eggs-directory']
+            pythonpaths = [path.replace(source, target) for path in pythonpaths]
+
+        # generate pythonpath directives
+        for path in pythonpaths:
             conf += "<pythonpath>%s</pythonpath>\n" % path
 
         with open(xml_path, "w") as f:
