@@ -119,6 +119,7 @@ Contributors
 #. `thefunny42 <https://github.com/thefunny42>`_
 #. `rage2000 <https://github.com/rage2000>`_
 #. `Andreas Motl <https://github.com/amotl>`_
+#. `davidjb <https://github.com/davidjb>`_
 
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
