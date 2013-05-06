@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+develop
+
+* add option "pythonpath-eggs-directory" to tweak base directory of generated pythonpath configuration directives
+
 0.0.16
 
 * documentation enhancements
@@ -90,6 +94,13 @@ profile
 
 use-system-binary
     It is possible to use an "external" uwsgi binary (installed by the OS' package manager or compiled manually) and just let the recipe generate the xml configuration file only (no building uWsgi). Default is ``False``.
+
+pythonpath-eggs-directory
+    By default, the configuration generator will use absolute paths to python eggs, usually inside ``buildout:eggs-directory`` by calling ``zc.recipe.egg.Egg(...).working_set()``.
+    To support setups which require using the option ``relative-paths = true``, this option allows to tweak the base directory of generated uwsgi pythonpath configuration directives, e.g.::
+
+        pythonpath-eggs-directory = /opt/vendor/product/python/eggs
+
 
 xml-*
     Any option starting with ``xml-`` will be stripped of this prefix and written to the ``xml`` configuration file; for example, ``xml-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>``.  
