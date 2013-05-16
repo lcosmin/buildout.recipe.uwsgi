@@ -10,7 +10,7 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
-develop
+0.0.17
 
 * add option "pythonpath-eggs-directory" to tweak base directory of generated pythonpath configuration directives
 
