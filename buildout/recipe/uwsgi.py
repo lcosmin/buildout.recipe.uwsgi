@@ -2,7 +2,6 @@ import os
 import subprocess
 import setuptools
 import shutil
-import sys
 import tempfile
 import logging
 from zc.buildout.download import Download
@@ -10,6 +9,18 @@ import zc
 import zc.recipe.egg
 
 DOWNLOAD_URL = "http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz"
+
+
+def str_to_bool(s):
+    """
+    Converts a string to a bool value; looks at the first character,
+    if it's y(es), t(rue) or 1 returns True, otherwise, False.
+    """
+    if len(s) > 0:
+        if s[0] in "yYtT1":
+            return True
+    return False
+
 
 class UWSGI:
     """
@@ -26,7 +37,6 @@ class UWSGI:
         else:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
         self.options = options
-
 
     def download_release(self):
         """
@@ -147,7 +157,8 @@ class UWSGI:
     def install(self):
         paths = []
 
-        if not self.options.get("use-system-binary", False):
+        use_sys_binary = str_to_bool(self.options.get("use-system-binary", "false"))
+        if not use_sys_binary:
             if not os.path.exists(os.path.join(self.buildout["buildout"]["bin-directory"], "uwsgi")):
                 # Download uWSGI.
                 download_path = self.download_release()

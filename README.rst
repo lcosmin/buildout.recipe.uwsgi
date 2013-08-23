@@ -10,21 +10,25 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
-develop
+0.0.18
 
-* add option "pythonpath-eggs-directory" to tweak base directory of generated pythonpath configuration directives
+* Fixed issue #11 
+
+0.0.17
+
+* Add option "pythonpath-eggs-directory" to tweak base directory of generated pythonpath configuration directives
 
 0.0.16
 
-* documentation enhancements
+* Documentation enhancements
 
 0.0.15
 
-* add option ``download-url`` to configure non-vanilla download url
+* Add option ``download-url`` to configure non-vanilla download url
 
 0.0.14
 
-* extra-paths fixes
+* Extra-paths fixes
 
 0.0.13
 
