@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.19
+
+* Setting the PYTHON_BIN env variable to the current python interpreter (for building uwsgi with the right interpreter)
+
 0.0.18
 
 * Fixed issue #11 
@@ -135,7 +139,7 @@ Contributors
 #. `rage2000 <https://github.com/rage2000>`_
 #. `Andreas Motl <https://github.com/amotl>`_
 #. `davidjb <https://github.com/davidjb>`_
-
+#. `apoh <https://github.com/apoh>`_
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
 
