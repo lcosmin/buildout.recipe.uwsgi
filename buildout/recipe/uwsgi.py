@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import setuptools
 import shutil
@@ -74,6 +75,7 @@ class UWSGI:
         #
         profile = self.options.get("profile", "default.ini")
         os.environ["UWSGI_PROFILE"] = profile
+        os.environ["PYTHON_BIN"] = sys.executable
 
         subprocess.check_call(["make", "-f", "Makefile"])
 
