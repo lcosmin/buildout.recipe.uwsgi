@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.20
+
+* Fixed download cache issue; if download-cache is present in the [buildout] section, it will be used for caching the source archive of uwsgi after download
+
 0.0.19
 
 * Setting the PYTHON_BIN env variable to the current python interpreter (for building uwsgi with the right interpreter)
