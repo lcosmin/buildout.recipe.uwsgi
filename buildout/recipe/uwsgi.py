@@ -33,6 +33,13 @@ class UWSGI:
         self.name = name
         self.buildout = buildout
         self.log = logging.getLogger(self.name)
+        
+        # Use the "download-cache" directory as cache, if present
+        self.cache_dir = buildout["buildout"].get("download-cache")
+        if self.cache_dir is not None:
+            # If cache_dir isn't an absolute path, make it relative to buildout's directory
+            self.cache_dir = os.path.join(buildout["buildout"]["directory"], self.cache_dir)
+                    
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
@@ -43,8 +50,11 @@ class UWSGI:
         """
         Download uWSGI release based on "version" option and return path to downloaded file.
         """
-        cache = tempfile.mkdtemp("download-cache")
-        download = Download(cache=cache)
+        if self.cache_dir is not None:
+            download = Download(cache=self.cache_dir)
+        else:
+            self.log.warning("not using a download cache for uwsgi")
+            download = Download()
         download_url = self.options.get("download-url", DOWNLOAD_URL)
         download_path, is_temp = download(download_url.format(self.options.get("version", "latest")))
         return download_path
