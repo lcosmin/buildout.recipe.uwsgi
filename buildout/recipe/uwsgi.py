@@ -175,7 +175,10 @@ class UWSGI:
             return True
 
         # Check the version
-        stdout, stderr = subprocess.call([self.uwsgi_binary_path, '--version'])
+        process = subprocess.Popen(
+            [self.uwsgi_binary_path, '--version'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
         return stdout.strip() == self.uwsgi_version
 
     def install(self):
