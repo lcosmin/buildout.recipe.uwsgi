@@ -10,6 +10,7 @@ import zc
 import zc.recipe.egg
 
 DOWNLOAD_URL = "http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz"
+MARKER = object()
 
 
 def str_to_bool(s):
@@ -82,27 +83,40 @@ class UWSGI:
         """
         Build uWSGI and returns path to executable.
         """
-        # Change dir to uwsgi_path for compile.
         current_path = os.getcwd()
+        profile = self.options.get("profile", MARKER)
+        if profile is MARKER:
+            profile = '%s/buildconf/default.ini' % uwsgi_path
+        elif not os.path.isabs(profile):
+            profile = os.path.abspath(profile)
+
+        # Change dir to uwsgi_path for compile.
         os.chdir(uwsgi_path)
+        # Add uwsgi_path to the Python path so we can import uwsgiconfig.
+        sys_path_changed = False
+        if uwsgi_path not in sys.path:
+            sys.path.append(uwsgi_path)
+            sys_path_changed = True
+        try:
+            # Build uWSGI. We don't use the Makefile, since it uses an
+            # hardcoded variable (with :=) we cannot specify the
+            # Python we want to use.
+            uwsgiconfig = __import__('uwsgiconfig')
+            uconf = uwsgiconfig.uConf(profile)
+            uconf.set('bin_name', self.name)
+            uwsgiconfig.build_uwsgi(uconf)
+        finally:
+            # Change back to original path and remove uwsgi_path from
+            # Python path if added.
+            os.chdir(current_path)
+            if sys_path_changed:
+                sys.path.remove(uwsgi_path)
 
-        #
-        # Set the environment
-        # Call make
-        #
-        profile = self.options.get("profile", "default.ini")
-        os.environ["UWSGI_PROFILE"] = profile
-        os.environ["PYTHON"] = sys.executable
-
-        subprocess.check_call(["make", "-f", "Makefile"])
         if os.path.isfile(self.uwsgi_binary_path):
             os.unlink(self.uwsgi_binary_path)
         shutil.copy(os.path.join(uwsgi_path, "uwsgi"), self.uwsgi_binary_path)
 
-        os.chdir(current_path)
-
     def get_extra_paths(self):
-
         # Add libraries found by a site .pth files to our extra-paths.
         if 'pth-files' in self.options:
             import site
