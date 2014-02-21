@@ -103,7 +103,7 @@ class UWSGI:
             # Python we want to use.
             uwsgiconfig = __import__('uwsgiconfig')
             uconf = uwsgiconfig.uConf(profile)
-            uconf.set('bin_name', self.name)
+            uconf.set('bin_name', 'uwsgi')
             uwsgiconfig.build_uwsgi(uconf)
         finally:
             # Change back to original path and remove uwsgi_path from
