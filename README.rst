@@ -18,8 +18,8 @@ Changelog
 
 * Always delete the build directory (even in case of errors).
 
-* Fix the environnement variables given to ``make`` (PYTHON_BIN did
-  nothing, PYTHON was the correct one).
+* Call uwsgiconfig.py instead of make to install uWSGI. This let you
+  choose which python you want to use.
 
 * Check the version of uwsgi if it is already installed.
 
