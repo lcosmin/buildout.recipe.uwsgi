@@ -10,6 +10,17 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.21 - unreleased
+
+* Check if you need to rebuild uwsgi when updating buildout (which
+  didn't work before because update didn't return the list of
+  installed paths).
+
+* Always delete the build directory (even in case of errors).
+
+* Fix the environnement variables given to make (PYTHON_BIN did
+  nothing, PYTHON was the correct one).
+
 0.0.20
 
 * Fixed download cache issue; if download-cache is present in the [buildout] section, it will be used for caching the source archive of uwsgi after download

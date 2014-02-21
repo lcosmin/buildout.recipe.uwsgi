@@ -33,17 +33,22 @@ class UWSGI:
         self.name = name
         self.buildout = buildout
         self.log = logging.getLogger(self.name)
-        
+
         # Use the "download-cache" directory as cache, if present
         self.cache_dir = buildout["buildout"].get("download-cache")
         if self.cache_dir is not None:
             # If cache_dir isn't an absolute path, make it relative to buildout's directory
             self.cache_dir = os.path.join(buildout["buildout"]["directory"], self.cache_dir)
-                    
+
+        self.use_sys_binary = str_to_bool(
+            options.get("use-system-binary", "false"))
+        self.uwsgi_binary_path = os.path.join(
+            buildout["buildout"]["bin-directory"], "uwsgi")
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
+
         self.options = options
 
     def download_release(self):
@@ -85,20 +90,12 @@ class UWSGI:
         #
         profile = self.options.get("profile", "default.ini")
         os.environ["UWSGI_PROFILE"] = profile
-        os.environ["PYTHON_BIN"] = sys.executable
+        os.environ["PYTHON"] = sys.executable
 
         subprocess.check_call(["make", "-f", "Makefile"])
+        shutil.copy(os.path.join(uwsgi_path, "uwsgi"), self.uwsgi_binary_path)
 
         os.chdir(current_path)
-        return os.path.join(uwsgi_path, "uwsgi")
-
-    def copy_uwsgi_to_bin(self, uwsgi_executable_path):
-        """
-        Copy uWSGI executable to bin and return the resulting path.
-        """
-        bin_path = self.buildout["buildout"]["bin-directory"]
-        shutil.copy(uwsgi_executable_path, bin_path)
-        return os.path.join(bin_path, os.path.basename(uwsgi_executable_path))
 
     def get_extra_paths(self):
 
@@ -148,7 +145,6 @@ class UWSGI:
         requirements, ws = self.egg.working_set()
 
         # get list of paths to put into pythonpath
-        #pythonpaths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
         pythonpaths = ws.entries + self.get_extra_paths()
 
         # mungle basedir of pythonpath entries
@@ -168,31 +164,25 @@ class UWSGI:
 
     def install(self):
         paths = []
-
-        use_sys_binary = str_to_bool(self.options.get("use-system-binary", "false"))
-        if not use_sys_binary:
-            if not os.path.exists(os.path.join(self.buildout["buildout"]["bin-directory"], "uwsgi")):
+        if not self.use_sys_binary:
+            if not os.path.isfile(self.uwsgi_binary_path):
                 # Download uWSGI.
                 download_path = self.download_release()
 
                 # Extract uWSGI.
                 uwsgi_path, extract_path = self.extract_release(download_path)
 
-                # Build uWSGI.
-                uwsgi_executable_path = self.build_uwsgi(uwsgi_path)
+                try:
+                    # Build uWSGI.
+                    self.build_uwsgi(uwsgi_path)
+                finally:
+                    # Remove extracted uWSGI package.
+                    shutil.rmtree(extract_path)
 
-                # Copy uWSGI to bin.
-                paths.append(self.copy_uwsgi_to_bin(uwsgi_executable_path))
-
-                # Remove extracted uWSGI package.
-                shutil.rmtree(extract_path)
+            paths.append(self.uwsgi_binary_path)
 
         # Create uWSGI conf xml.
         paths.append(self.create_conf_xml())
-
         return paths
 
-    def update(self):
-        # Create uWSGI conf xml - the egg set might have changed even if
-        # the uwsgi section is unchanged so it's safer to re-generate the xml
-        self.create_conf_xml()
+    update = install
