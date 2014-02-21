@@ -92,25 +92,17 @@ class UWSGI:
 
         # Change dir to uwsgi_path for compile.
         os.chdir(uwsgi_path)
-        # Add uwsgi_path to the Python path so we can import uwsgiconfig.
-        sys_path_changed = False
-        if uwsgi_path not in sys.path:
-            sys.path.append(uwsgi_path)
-            sys_path_changed = True
         try:
             # Build uWSGI. We don't use the Makefile, since it uses an
-            # hardcoded variable (with :=) we cannot specify the
+            # override variable (with :=) we cannot specify the
             # Python we want to use.
-            uwsgiconfig = __import__('uwsgiconfig')
-            uconf = uwsgiconfig.uConf(profile)
-            uconf.set('bin_name', 'uwsgi')
-            uwsgiconfig.build_uwsgi(uconf)
+            subprocess.check_call([
+                self.options.get('executable', sys.executable),
+                os.path.join(uwsgi_path, 'uwsgiconfig.py'),
+                '--build', profile])
         finally:
-            # Change back to original path and remove uwsgi_path from
-            # Python path if added.
+            # Change back to original path.
             os.chdir(current_path)
-            if sys_path_changed:
-                sys.path.remove(uwsgi_path)
 
         if os.path.isfile(self.uwsgi_binary_path):
             os.unlink(self.uwsgi_binary_path)
