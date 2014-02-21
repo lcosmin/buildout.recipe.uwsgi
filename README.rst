@@ -18,8 +18,10 @@ Changelog
 
 * Always delete the build directory (even in case of errors).
 
-* Fix the environnement variables given to make (PYTHON_BIN did
+* Fix the environnement variables given to ``make`` (PYTHON_BIN did
   nothing, PYTHON was the correct one).
+
+* Check the version of uwsgi if it is already installed.
 
 0.0.20
 
