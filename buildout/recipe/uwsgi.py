@@ -40,8 +40,9 @@ class UWSGI:
             # If cache_dir isn't an absolute path, make it relative to buildout's directory
             self.cache_dir = os.path.join(buildout["buildout"]["directory"], self.cache_dir)
 
-        self.use_sys_binary = str_to_bool(
+        self.use_system_binary = str_to_bool(
             options.get("use-system-binary", "false"))
+        self.uwsgi_version = options.get("version", "latest")
         self.uwsgi_binary_path = os.path.join(
             buildout["buildout"]["bin-directory"], "uwsgi")
         if "extra-paths" in options:
@@ -61,7 +62,8 @@ class UWSGI:
             self.log.warning("not using a download cache for uwsgi")
             download = Download()
         download_url = self.options.get("download-url", DOWNLOAD_URL)
-        download_path, is_temp = download(download_url.format(self.options.get("version", "latest")))
+        download_path, is_temp = download(
+            download_url.format(self.uwsgi_version))
         return download_path
 
     def extract_release(self, download_path):
@@ -93,6 +95,8 @@ class UWSGI:
         os.environ["PYTHON"] = sys.executable
 
         subprocess.check_call(["make", "-f", "Makefile"])
+        if os.path.isfile(self.uwsgi_binary_path):
+            os.unlink(self.uwsgi_binary_path)
         shutil.copy(os.path.join(uwsgi_path, "uwsgi"), self.uwsgi_binary_path)
 
         os.chdir(current_path)
@@ -162,10 +166,22 @@ class UWSGI:
 
         return xml_path
 
+    def is_uwsgi_installed(self):
+        if not os.path.isfile(self.uwsgi_binary_path):
+            return False
+        if self.uwsgi_version == 'latest':
+            # If you ask for the latest version, we still say you have it,
+            # even though it might not be true.
+            return True
+
+        # Check the version
+        stdout, stderr = subprocess.call([self.uwsgi_binary_path, '--version'])
+        return stdout.strip() == self.uwsgi_version
+
     def install(self):
         paths = []
-        if not self.use_sys_binary:
-            if not os.path.isfile(self.uwsgi_binary_path):
+        if not self.use_system_binary:
+            if not self.is_uwsgi_installed():
                 # Download uWSGI.
                 download_path = self.download_release()
 
