@@ -35,22 +35,28 @@ class UWSGI:
         self.buildout = buildout
         self.log = logging.getLogger(self.name)
 
+        global_options = buildout["buildout"]
         # Use the "download-cache" directory as cache, if present
-        self.cache_dir = buildout["buildout"].get("download-cache")
+        self.cache_dir = global_options.get("download-cache")
         if self.cache_dir is not None:
-            # If cache_dir isn't an absolute path, make it relative to buildout's directory
-            self.cache_dir = os.path.join(buildout["buildout"]["directory"], self.cache_dir)
+            # If cache_dir isn't an absolute path, make it relative to
+            # buildout's directory
+            if not os.path.isabs(self.cache_dir):
+                self.cache_dir = os.path.join(
+                    global_options["directory"], self.cache_dir)
 
         self.use_system_binary = str_to_bool(
             options.get("use-system-binary", "false"))
         self.uwsgi_version = options.get("version", "latest")
         self.uwsgi_binary_path = os.path.join(
-            buildout["buildout"]["bin-directory"], "uwsgi")
+            global_options["bin-directory"], "uwsgi")
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
-
+        self.output = options.setdefault(
+            "output",
+            os.path.join(global_options["parts-directory"], self.name))
         self.options = options
 
     def download_release(self):
@@ -130,13 +136,9 @@ class UWSGI:
         """
         Create xml file file with which to run uwsgi.
         """
-        path = os.path.join(self.buildout["buildout"]["parts-directory"], self.name)
-        try:
-            os.mkdir(path)
-        except OSError:
-            pass
-
-        xml_path = os.path.join(path, "uwsgi.xml")
+        directory = os.path.dirname(self.output)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
 
         conf = ""
         for key, value in self.options.items():
@@ -167,10 +169,10 @@ class UWSGI:
         for path in pythonpaths:
             conf += "<pythonpath>%s</pythonpath>\n" % path
 
-        with open(xml_path, "w") as f:
+        with open(self.output, "w") as f:
             f.write("<uwsgi>\n%s</uwsgi>" % conf)
 
-        return xml_path
+        return self.output
 
     def is_uwsgi_installed(self):
         if not os.path.isfile(self.uwsgi_binary_path):
