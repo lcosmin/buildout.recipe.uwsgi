@@ -18,9 +18,8 @@ def str_to_bool(s):
     Converts a string to a bool value; looks at the first character,
     if it's y(es), t(rue) or 1 returns True, otherwise, False.
     """
-    if len(s) > 0:
-        if s[0] in "yYtT1":
-            return True
+    if len(s) > 0 and s[0] in "yYtT1":
+        return True
     return False
 
 
