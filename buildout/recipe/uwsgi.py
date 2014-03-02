@@ -10,6 +10,7 @@ import zc
 import zc.recipe.egg
 
 DOWNLOAD_URL = "http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz"
+MARKER = object()
 
 
 def str_to_bool(s):
@@ -33,17 +34,29 @@ class UWSGI:
         self.name = name
         self.buildout = buildout
         self.log = logging.getLogger(self.name)
-        
+
+        global_options = buildout["buildout"]
         # Use the "download-cache" directory as cache, if present
-        self.cache_dir = buildout["buildout"].get("download-cache")
+        self.cache_dir = global_options.get("download-cache")
         if self.cache_dir is not None:
-            # If cache_dir isn't an absolute path, make it relative to buildout's directory
-            self.cache_dir = os.path.join(buildout["buildout"]["directory"], self.cache_dir)
-                    
+            # If cache_dir isn't an absolute path, make it relative to
+            # buildout's directory
+            if not os.path.isabs(self.cache_dir):
+                self.cache_dir = os.path.join(
+                    global_options["directory"], self.cache_dir)
+
+        self.use_system_binary = str_to_bool(
+            options.get("use-system-binary", "false"))
+        self.uwsgi_version = options.get("version", "latest")
+        self.uwsgi_binary_path = os.path.join(
+            global_options["bin-directory"], "uwsgi")
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
+        self.output = options.setdefault(
+            "output",
+            os.path.join(global_options["parts-directory"], self.name))
         self.options = options
 
     def download_release(self):
@@ -56,7 +69,8 @@ class UWSGI:
             self.log.warning("not using a download cache for uwsgi")
             download = Download()
         download_url = self.options.get("download-url", DOWNLOAD_URL)
-        download_path, is_temp = download(download_url.format(self.options.get("version", "latest")))
+        download_path, is_temp = download(
+            download_url.format(self.uwsgi_version))
         return download_path
 
     def extract_release(self, download_path):
@@ -75,33 +89,32 @@ class UWSGI:
         """
         Build uWSGI and returns path to executable.
         """
-        # Change dir to uwsgi_path for compile.
         current_path = os.getcwd()
+        profile = self.options.get("profile", MARKER)
+        if profile is MARKER:
+            profile = '%s/buildconf/default.ini' % uwsgi_path
+        elif not os.path.isabs(profile):
+            profile = os.path.abspath(profile)
+
+        # Change dir to uwsgi_path for compile.
         os.chdir(uwsgi_path)
+        try:
+            # Build uWSGI. We don't use the Makefile, since it uses an
+            # override variable (with :=) we cannot specify the
+            # Python we want to use.
+            subprocess.check_call([
+                self.options.get('executable', sys.executable),
+                os.path.join(uwsgi_path, 'uwsgiconfig.py'),
+                '--build', profile])
+        finally:
+            # Change back to original path.
+            os.chdir(current_path)
 
-        #
-        # Set the environment
-        # Call make
-        #
-        profile = self.options.get("profile", "default.ini")
-        os.environ["UWSGI_PROFILE"] = profile
-        os.environ["PYTHON_BIN"] = sys.executable
-
-        subprocess.check_call(["make", "-f", "Makefile"])
-
-        os.chdir(current_path)
-        return os.path.join(uwsgi_path, "uwsgi")
-
-    def copy_uwsgi_to_bin(self, uwsgi_executable_path):
-        """
-        Copy uWSGI executable to bin and return the resulting path.
-        """
-        bin_path = self.buildout["buildout"]["bin-directory"]
-        shutil.copy(uwsgi_executable_path, bin_path)
-        return os.path.join(bin_path, os.path.basename(uwsgi_executable_path))
+        if os.path.isfile(self.uwsgi_binary_path):
+            os.unlink(self.uwsgi_binary_path)
+        shutil.copy(os.path.join(uwsgi_path, "uwsgi"), self.uwsgi_binary_path)
 
     def get_extra_paths(self):
-
         # Add libraries found by a site .pth files to our extra-paths.
         if 'pth-files' in self.options:
             import site
@@ -123,13 +136,9 @@ class UWSGI:
         """
         Create xml file file with which to run uwsgi.
         """
-        path = os.path.join(self.buildout["buildout"]["parts-directory"], self.name)
-        try:
-            os.mkdir(path)
-        except OSError:
-            pass
-
-        xml_path = os.path.join(path, "uwsgi.xml")
+        directory = os.path.dirname(self.output)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
 
         conf = ""
         for key, value in self.options.items():
@@ -148,7 +157,6 @@ class UWSGI:
         requirements, ws = self.egg.working_set()
 
         # get list of paths to put into pythonpath
-        #pythonpaths = zc.buildout.easy_install._get_path(ws, self.get_extra_paths())
         pythonpaths = ws.entries + self.get_extra_paths()
 
         # mungle basedir of pythonpath entries
@@ -161,38 +169,47 @@ class UWSGI:
         for path in pythonpaths:
             conf += "<pythonpath>%s</pythonpath>\n" % path
 
-        with open(xml_path, "w") as f:
+        with open(self.output, "w") as f:
             f.write("<uwsgi>\n%s</uwsgi>" % conf)
 
-        return xml_path
+        return self.output
+
+    def is_uwsgi_installed(self):
+        if not os.path.isfile(self.uwsgi_binary_path):
+            return False
+        if self.uwsgi_version == 'latest':
+            # If you ask for the latest version, we still say you have it,
+            # even though it might not be true.
+            return True
+
+        # Check the version
+        process = subprocess.Popen(
+            [self.uwsgi_binary_path, '--version'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        return stdout.strip() == self.uwsgi_version
 
     def install(self):
         paths = []
-
-        use_sys_binary = str_to_bool(self.options.get("use-system-binary", "false"))
-        if not use_sys_binary:
-            if not os.path.exists(os.path.join(self.buildout["buildout"]["bin-directory"], "uwsgi")):
+        if not self.use_system_binary:
+            if not self.is_uwsgi_installed():
                 # Download uWSGI.
                 download_path = self.download_release()
 
                 # Extract uWSGI.
                 uwsgi_path, extract_path = self.extract_release(download_path)
 
-                # Build uWSGI.
-                uwsgi_executable_path = self.build_uwsgi(uwsgi_path)
+                try:
+                    # Build uWSGI.
+                    self.build_uwsgi(uwsgi_path)
+                finally:
+                    # Remove extracted uWSGI package.
+                    shutil.rmtree(extract_path)
 
-                # Copy uWSGI to bin.
-                paths.append(self.copy_uwsgi_to_bin(uwsgi_executable_path))
-
-                # Remove extracted uWSGI package.
-                shutil.rmtree(extract_path)
+            paths.append(self.uwsgi_binary_path)
 
         # Create uWSGI conf xml.
         paths.append(self.create_conf_xml())
-
         return paths
 
-    def update(self):
-        # Create uWSGI conf xml - the egg set might have changed even if
-        # the uwsgi section is unchanged so it's safer to re-generate the xml
-        self.create_conf_xml()
+    update = install
