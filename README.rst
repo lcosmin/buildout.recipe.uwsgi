@@ -122,7 +122,7 @@ output
     file called ``name of the part.xml`` in the parts directory).
 
 profile
-    uWSGI has profiles (build configurations) which can be used to configure which plugins will be built with uWSGI (see https://github.com/unbit/uwsgi/tree/master/buildconf). Default is ``default.ini``.
+    uWSGI has profiles (build configurations) which can be used to configure which plugins will be built with uWSGI (see https://github.com/unbit/uwsgi/tree/master/buildconf). Default is ``default.ini``. If the specified profile is an absolute path, then that is going to be used, otherwise the profile configuration is searched in ``uwsgi``'s source folder (``buildconf/``), finally falling back to the current directory (where buildout is invoked from).
 
 use-system-binary
     It is possible to use an "external" uwsgi binary (installed by the OS' package manager or compiled manually) and just let the recipe generate the xml configuration file only (no building uWsgi). Default is ``False``.
