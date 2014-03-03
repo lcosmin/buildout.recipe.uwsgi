@@ -91,27 +91,36 @@ class UWSGI:
         """
         current_path = os.getcwd()
         profile = self.options.get("profile", MARKER)
+
         if profile is MARKER:
             profile = '%s/buildconf/default.ini' % uwsgi_path
         elif not os.path.isabs(profile):
-            profile = os.path.abspath(profile)
+            # if the specified profile is not an absolute path, try
+            # looking for it in the buildout folder first; otherwise,
+            # look for it in the current directory
+            buildout_dir_profile = '%s/buildconf/%s' % (uwsgi_path, profile)
+            if os.path.isfile(buildout_dir_profile):
+                profile = buildout_dir_profile
+            else:
+                profile = os.path.abspath(profile)
 
         # Change dir to uwsgi_path for compile.
         os.chdir(uwsgi_path)
         try:
             # Build uWSGI. We don't use the Makefile, since it uses an
             # override variable (with :=) we cannot specify the
-            # Python we want to use.
-            subprocess.check_call([
-                self.options.get('executable', sys.executable),
-                os.path.join(uwsgi_path, 'uwsgiconfig.py'),
-                '--build', profile])
+            # Python interpreter we want to use.
+            subprocess.check_output([self.options.get('executable', sys.executable),
+                                    os.path.join(uwsgi_path, 'uwsgiconfig.py'),
+                                    '--build',
+                                    profile])
         finally:
             # Change back to original path.
             os.chdir(current_path)
 
         if os.path.isfile(self.uwsgi_binary_path):
             os.unlink(self.uwsgi_binary_path)
+
         shutil.copy(os.path.join(uwsgi_path, "uwsgi"), self.uwsgi_binary_path)
 
     def get_extra_paths(self):
@@ -121,9 +130,7 @@ class UWSGI:
             for pth_file in self.options['pth-files'].splitlines():
                 pth_libs = site.addsitedir(pth_file, set())
                 if not pth_libs:
-                    self.log.warning(
-                        'No site *.pth libraries found for pth_file=%s' % (
-                        pth_file,))
+                    self.log.warning('No site *.pth libraries found for pth_file=%s' % pth_file)
                 else:
                     self.log.info('Adding *.pth libraries=%s' % pth_libs)
                     self.options['extra-paths'] += '\n' + '\n'.join(pth_libs)
