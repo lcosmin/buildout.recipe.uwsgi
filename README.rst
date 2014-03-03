@@ -23,6 +23,9 @@ Changelog
 
 * Check the version of uwsgi if it is already installed.
 
+* Add an option to configure the path of the generated uWSGI
+  configuration file.
+
 0.0.20
 
 * Fixed download cache issue; if download-cache is present in the [buildout] section, it will be used for caching the source archive of uwsgi after download
@@ -33,7 +36,7 @@ Changelog
 
 0.0.18
 
-* Fixed issue #11 
+* Fixed issue #11
 
 0.0.17
 
@@ -99,7 +102,7 @@ You can specify a number of options for this recipe, for "fine-tuning" the build
 
     [uwsgi]
     recipe=buildout.recipe.uwsgi
-    download-url=http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz    
+    download-url=http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz
     version=1.2.5
     profile=default.ini
     use-system-binary=1
@@ -113,6 +116,10 @@ download-url
 
 version
     Version of uWSGI to download (default is ``latest``).
+
+output
+    Path where the uWSGI configuration file is generated (default to a
+    file called ``name of the part.xml`` in the parts directory).
 
 profile
     uWSGI has profiles (build configurations) which can be used to configure which plugins will be built with uWSGI (see https://github.com/unbit/uwsgi/tree/master/buildconf). Default is ``default.ini``.
@@ -128,7 +135,7 @@ pythonpath-eggs-directory
 
 
 xml-*
-    Any option starting with ``xml-`` will be stripped of this prefix and written to the ``xml`` configuration file; for example, ``xml-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>``.  
+    Any option starting with ``xml-`` will be stripped of this prefix and written to the ``xml`` configuration file; for example, ``xml-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>``.
 
     For any options that should not take an argument, specify the option with a value of ``true`` (case insensitive); for example ``xml-disable-logging = true`` will be output as ``<disable-logging/>``.
 
@@ -159,4 +166,3 @@ Contributors
 #. `apoh <https://github.com/apoh>`_
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
-

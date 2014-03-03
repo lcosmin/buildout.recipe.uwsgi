@@ -56,7 +56,8 @@ class UWSGI:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
         self.output = options.setdefault(
             "output",
-            os.path.join(global_options["parts-directory"], self.name))
+            os.path.join(global_options["parts-directory"],
+                         self.name + '.xml'))
         self.options = options
 
     def download_release(self):
