@@ -37,26 +37,26 @@ class UWSGI:
         global_options = buildout["buildout"]
         # Use the "download-cache" directory as cache, if present
         self.cache_dir = global_options.get("download-cache")
+
         if self.cache_dir is not None:
             # If cache_dir isn't an absolute path, make it relative to
             # buildout's directory
             if not os.path.isabs(self.cache_dir):
-                self.cache_dir = os.path.join(
-                    global_options["directory"], self.cache_dir)
+                self.cache_dir = os.path.join(global_options["directory"], self.cache_dir)
 
-        self.use_system_binary = str_to_bool(
-            options.get("use-system-binary", "false"))
+        self.use_system_binary = str_to_bool(options.get("use-system-binary", "false"))
         self.uwsgi_version = options.get("version", "latest")
-        self.uwsgi_binary_path = os.path.join(
-            global_options["bin-directory"], "uwsgi")
+        self.uwsgi_binary_path = os.path.join(global_options["bin-directory"], "uwsgi")
+
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
             options.setdefault("extra-paths", options.get("pythonpath", ""))
-        self.output = options.setdefault(
-            "output",
-            os.path.join(global_options["parts-directory"],
-                         self.name, 'uwsgi.xml'))
+
+        self.output = options.setdefault("output",
+                                         os.path.join(global_options["parts-directory"],
+                                                      self.name,
+                                                      'uwsgi.xml'))
         self.options = options
 
     def download_release(self):
@@ -68,9 +68,9 @@ class UWSGI:
         else:
             self.log.warning("not using a download cache for uwsgi")
             download = Download()
+
         download_url = self.options.get("download-url", DOWNLOAD_URL)
-        download_path, is_temp = download(
-            download_url.format(self.uwsgi_version))
+        download_path, is_temp = download(download_url.format(self.uwsgi_version))
         return download_path
 
     def extract_release(self, download_path):
@@ -184,15 +184,17 @@ class UWSGI:
     def is_uwsgi_installed(self):
         if not os.path.isfile(self.uwsgi_binary_path):
             return False
+
         if self.uwsgi_version == 'latest':
-            # If you ask for the latest version, we still say you have it,
-            # even though it might not be true.
-            return True
+            # If you ask for the latest version, we say we don't, in order to
+            # force a download+recompile (since we can't know for sure if the package was
+            # updated upstream or not)
+            return False
 
         # Check the version
-        process = subprocess.Popen(
-            [self.uwsgi_binary_path, '--version'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen([self.uwsgi_binary_path, '--version'],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         return stdout.strip() == self.uwsgi_version
 
