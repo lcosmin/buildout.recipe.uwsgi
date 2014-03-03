@@ -10,7 +10,7 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
-0.0.21 - unreleased
+0.0.21
 
 * Check if you need to rebuild uwsgi when updating buildout (which
   didn't work before because update didn't return the list of
