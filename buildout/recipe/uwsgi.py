@@ -106,14 +106,16 @@ class UWSGI:
 
         # Change dir to uwsgi_path for compile.
         os.chdir(uwsgi_path)
+        build_stdout = tempfile.TemporaryFile()
         try:
             # Build uWSGI. We don't use the Makefile, since it uses an
             # override variable (with :=) we cannot specify the
             # Python interpreter we want to use.
-            subprocess.check_output([self.options.get('executable', sys.executable),
-                                    os.path.join(uwsgi_path, 'uwsgiconfig.py'),
-                                    '--build',
-                                    profile])
+            subprocess.check_call([self.options.get('executable', sys.executable),
+                                   os.path.join(uwsgi_path, 'uwsgiconfig.py'),
+                                   '--build',
+                                   profile],
+                                  stdout=build_stdout)
         finally:
             # Change back to original path.
             os.chdir(current_path)
