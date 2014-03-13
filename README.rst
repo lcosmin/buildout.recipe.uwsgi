@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.22
+
+* Using `subprocess.check_call` for compatibility with Python 2.6
+
 0.0.21
 
 * Check if you need to rebuild uwsgi when updating buildout (which
@@ -164,5 +168,6 @@ Contributors
 #. `Andreas Motl <https://github.com/amotl>`_
 #. `davidjb <https://github.com/davidjb>`_
 #. `apoh <https://github.com/apoh>`_
+#. `Jeff Dairiki <https://github.com/dairiki>`_
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
