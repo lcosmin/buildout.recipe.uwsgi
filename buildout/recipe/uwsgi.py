@@ -158,7 +158,7 @@ class UWSGI:
                     conf += "<%s/>\n" % key
                 elif value and value.lower() != "false":
                     if "\n" in value:
-                        for subvalue in value.split():
+                        for subvalue in value.split('\n'):
                             conf += "<%s>%s</%s>\n" % (key, subvalue, key)
                     else:
                         conf += "<%s>%s</%s>\n" % (key, value, key)
