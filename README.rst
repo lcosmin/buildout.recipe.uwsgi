@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.23
+
+* Correctly splitting on '\n' when dealing with multiline options
+
 0.0.22
 
 * Using `subprocess.check_call` for compatibility with Python 2.6
@@ -169,5 +173,6 @@ Contributors
 #. `davidjb <https://github.com/davidjb>`_
 #. `apoh <https://github.com/apoh>`_
 #. `Jeff Dairiki <https://github.com/dairiki>`_
+#. `wiseteck <https://github.com/wiseteck>`_
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
