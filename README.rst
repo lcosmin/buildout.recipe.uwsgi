@@ -10,6 +10,11 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+Unreleased
+
+* For the paranoid: Add option ``md5sum`` to force checksum validation of
+  downloaded tarball.
+
 0.0.23
 
 * Correctly splitting on '\n' when dealing with multiline options
@@ -112,6 +117,7 @@ You can specify a number of options for this recipe, for "fine-tuning" the build
     recipe=buildout.recipe.uwsgi
     download-url=http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz
     version=1.2.5
+    md5sum=d23ed461d1848aee4cfa16bde247b293
     profile=default.ini
     use-system-binary=1
     xml-socket=127.0.0.1:7001
@@ -124,6 +130,10 @@ download-url
 
 version
     Version of uWSGI to download (default is ``latest``).
+
+md5sum
+    MD5 checksum for the source tarball.  An error will be raised
+    upon mismatch. If left unset no check is performed.
 
 output
     Path where the uWSGI configuration file is generated (default to a
