@@ -46,6 +46,7 @@ class UWSGI:
 
         self.use_system_binary = str_to_bool(options.get("use-system-binary", "false"))
         self.uwsgi_version = options.get("version", "latest")
+        self.md5sum = options.get('md5sum') or None # empty string => None
         self.uwsgi_binary_path = os.path.join(global_options["bin-directory"], "uwsgi")
 
         if "extra-paths" in options:
@@ -70,7 +71,8 @@ class UWSGI:
             download = Download()
 
         download_url = self.options.get("download-url", DOWNLOAD_URL)
-        download_path, is_temp = download(download_url.format(self.uwsgi_version))
+        download_path, is_temp = download(
+            download_url.format(self.uwsgi_version), md5sum=self.md5sum)
         return download_path
 
     def extract_release(self, download_path):
