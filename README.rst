@@ -12,7 +12,7 @@ Changelog
 
 0.0.23
 
-* Correctly splitting on '\n' when dealing with multiline options
+* Correctly splitting on '\\n' when dealing with multiline options
 
 0.0.22
 
