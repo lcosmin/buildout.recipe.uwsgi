@@ -10,7 +10,7 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
-Unreleased
+0.0.24
 
 * For the paranoid: Add option ``md5sum`` to force checksum validation of
   downloaded tarball.
