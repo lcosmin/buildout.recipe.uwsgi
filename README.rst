@@ -12,7 +12,7 @@ Changelog
 
 0.0.25
 
-* Added a new configuration option `output-format` which can be used to specify what kind of configuration file to create
+* Added a new configuration option ``output-format`` which can be used to specify what kind of configuration file to create
   (``xml`` - default, or ``ini``)
 * ``xml-*`` option have been deprecated in favor of ``config-*``; using the former will cause a warning.
 
