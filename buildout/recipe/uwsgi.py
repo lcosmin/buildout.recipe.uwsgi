@@ -49,6 +49,12 @@ class UWSGI:
         self.md5sum = options.get('md5sum') or None # empty string => None
         self.uwsgi_binary_path = os.path.join(global_options["bin-directory"], "uwsgi")
 
+        # xml, ini
+        self.config_file_format = options.get("output-format", "xml").lower()
+        if self.config_file_format not in ["xml", "ini"]:
+            self.log.warn("unknown output configuration format, defaulting to xml")
+            self.config_file_format = "xml"
+
         if "extra-paths" in options:
             options["pythonpath"] = options["extra-paths"]
         else:
@@ -57,7 +63,7 @@ class UWSGI:
         self.output = options.setdefault("output",
                                          os.path.join(global_options["parts-directory"],
                                                       self.name,
-                                                      'uwsgi.xml'))
+                                                      "uwsgi.{}".format(self.config_file_format)))
         self.options = options
 
     def download_release(self):
@@ -143,29 +149,31 @@ class UWSGI:
         return [p.replace('/', os.path.sep) for p in
                 self.options['extra-paths'].splitlines() if p.strip()]
 
-    def create_conf_xml(self):
-        """
-        Create xml file file with which to run uwsgi.
-        """
-        directory = os.path.dirname(self.output)
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
+    def create_configuration_file(self):
+        warned = False
+        conf = []
 
-        conf = ""
         for key, value in self.options.items():
-            # Configuration items for the XML file are prefixed with "xml-"
-            if key.startswith("xml-") and len(key) > 4:
-                key = key[4:]
-                if value.lower() == "true":
-                    conf += "<%s/>\n" % key
-                elif value and value.lower() != "false":
-                    if "\n" in value:
-                        for subvalue in value.splitlines():
-                            conf += "<%s>%s</%s>\n" % (key, subvalue, key)
-                    else:
-                        conf += "<%s>%s</%s>\n" % (key, value, key)
 
-        requirements, ws = self.egg.working_set()
+            if key.startswith("xml-") and len(key) > 4:
+                if not warned:
+                    self.log.warn("using 'xml-' options has been deprecated in favor of 'config-'. See documentation for details.")
+                    warned = True
+
+                key = key[4:]
+
+            elif key.startswith("config-") and len(key) > 7:
+                key = key[7:]
+            else:
+                continue
+
+            if "\n" in value:
+                for subvalue in value.splitlines():
+                    conf.append((key, subvalue))
+            else:
+                conf.append((key, value))
+
+        _, ws = self.egg.working_set()
 
         # get list of paths to put into pythonpath
         pythonpaths = ws.entries + self.get_extra_paths()
@@ -178,12 +186,36 @@ class UWSGI:
 
         # generate pythonpath directives
         for path in pythonpaths:
-            conf += "<pythonpath>%s</pythonpath>\n" % path
+            conf.append(("pythonpath", path))
 
-        with open(self.output, "w") as f:
-            f.write("<uwsgi>\n%s</uwsgi>" % conf)
+        directory = os.path.dirname(self.output)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
+
+        if self.config_file_format == "xml":
+            self.write_config_as_xml(conf)
+        elif self.config_file_format == "ini":
+            self.write_config_as_ini(conf)
 
         return self.output
+
+    def write_config_as_xml(self, conf_options):
+        conf = ""
+        for key, value in conf_options:
+            if value.lower() == "true":
+                conf += "<{}/>\n".format(key)
+            elif value.lower() != "false":
+                conf += "<{0}>{1}</{0}>\n".format(key, value)
+
+        with open(self.output, "w") as f:
+            f.write("<uwsgi>\n{}</uwsgi>".format(conf))
+
+    def write_config_as_ini(self, conf_options):
+        conf = "[uwsgi]\n"
+        for key, value in conf_options:
+            conf += "{} = {}\n".format(key, value)
+        with open(self.output, "w") as f:
+            f.write(conf)
 
     def is_uwsgi_installed(self):
         if not os.path.isfile(self.uwsgi_binary_path):
@@ -221,8 +253,8 @@ class UWSGI:
 
             paths.append(self.uwsgi_binary_path)
 
-        # Create uWSGI conf xml.
-        paths.append(self.create_conf_xml())
+        # Create uWSGI config file.
+        paths.append(self.create_configuration_file())
         return paths
 
     update = install

@@ -10,6 +10,12 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.0.25
+
+* Added a new configuration option `output-format` which can be used to specify what kind of configuration file to create
+  (``xml`` - default, or ``ini``)
+* ``xml-*`` option have been deprecated in favor of ``config-*``; using the former will cause a warning.
+
 0.0.24
 
 * For the paranoid: Add option ``md5sum`` to force checksum validation of
@@ -120,9 +126,9 @@ You can specify a number of options for this recipe, for "fine-tuning" the build
     md5sum=d23ed461d1848aee4cfa16bde247b293
     profile=default.ini
     use-system-binary=1
-    xml-socket=127.0.0.1:7001
-    xml-module=my_uwsgi_package.wsgi
-    xml-master=True
+    config-socket=127.0.0.1:7001
+    config-module=my_uwsgi_package.wsgi
+    config-master=True
 
 
 download-url
@@ -137,7 +143,10 @@ md5sum
 
 output
     Path where the uWSGI configuration file is generated (default to a
-    file called ``name of the part.xml`` in the parts directory).
+    file called ``name of the part.output-format`` in the parts directory).
+
+output-format
+    What kind of uWSGI configuration file to generate (``xml`` or ``ini``).
 
 profile
     uWSGI has profiles (build configurations) which can be used to configure which plugins will be built with uWSGI (see https://github.com/unbit/uwsgi/tree/master/buildconf). Default is ``default.ini``. If the specified profile is an absolute path, then that is going to be used, otherwise the profile configuration is searched in ``uwsgi``'s source folder (``buildconf/``), finally falling back to the current directory (where buildout is invoked from).
@@ -152,10 +161,10 @@ pythonpath-eggs-directory
         pythonpath-eggs-directory = /opt/vendor/product/python/eggs
 
 
-xml-*
-    Any option starting with ``xml-`` will be stripped of this prefix and written to the ``xml`` configuration file; for example, ``xml-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>``.
+config-*
+    Any option starting with ``config-`` will be stripped of this prefix and written to the configuration file specified by ``output``, using ``output-format`` as format; for example,
+    ``config-socket=127.0.0.1:7001`` will be output as ``<socket>127.0.0.1:7001</socket>`` if ``output-format`` is ``xml``.
 
-    For any options that should not take an argument, specify the option with a value of ``true`` (case insensitive); for example ``xml-disable-logging = true`` will be output as ``<disable-logging/>``.
 
 
 Authors
