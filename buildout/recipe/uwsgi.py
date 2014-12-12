@@ -63,7 +63,7 @@ class UWSGI:
         self.output = options.setdefault("output",
                                          os.path.join(global_options["parts-directory"],
                                                       self.name,
-                                                      "uwsgi.{}".format(self.config_file_format)))
+                                                      "uwsgi.{0}".format(self.config_file_format)))
         self.options = options
 
     def download_release(self):
@@ -203,17 +203,17 @@ class UWSGI:
         conf = ""
         for key, value in conf_options:
             if value.lower() == "true":
-                conf += "<{}/>\n".format(key)
+                conf += "<{0}/>\n".format(key)
             elif value.lower() != "false":
                 conf += "<{0}>{1}</{0}>\n".format(key, value)
 
         with open(self.output, "w") as f:
-            f.write("<uwsgi>\n{}</uwsgi>".format(conf))
+            f.write("<uwsgi>\n{0}</uwsgi>".format(conf))
 
     def write_config_as_ini(self, conf_options):
         conf = "[uwsgi]\n"
         for key, value in conf_options:
-            conf += "{} = {}\n".format(key, value)
+            conf += "{0} = {1}\n".format(key, value)
         with open(self.output, "w") as f:
             f.write(conf)
 
