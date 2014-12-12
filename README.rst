@@ -2,7 +2,7 @@ buildout.recipe.uwsgi
 =====================
 
 This is a `zc.buildout <http://www.buildout.org/>`_ recipe for downloading, installing and configuring uWSGI_ inside a buildout.
-It compiles an uWSGI executable in ``bin/`` and a ``xml`` configuration file in ``parts/``.
+It compiles an uWSGI executable in ``bin/`` and a configuration file (``xml`` or ``ini``) in ``parts/``.
 
 Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsephton.recipe.uwsgi>`_ .
 
@@ -109,6 +109,8 @@ Running the buildout will download and compile uWSGI and add an executable with 
 ``uwsgi`` can then be started like::
 
     $ ./bin/uwsgi --xml parts/uwsgi/uwsgi.xml
+    
+By configuring the ``output-format`` option, you can select other configuration file formats, such as ``ini``.
 
 Configuration options
 =====================
@@ -124,6 +126,8 @@ You can specify a number of options for this recipe, for "fine-tuning" the build
     download-url=http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz
     version=1.2.5
     md5sum=d23ed461d1848aee4cfa16bde247b293
+    output=${buildout:directory}/parts/uwsgi/uwsgi.ini
+    output-format=ini
     profile=default.ini
     use-system-binary=1
     config-socket=127.0.0.1:7001
@@ -142,8 +146,8 @@ md5sum
     upon mismatch. If left unset no check is performed.
 
 output
-    Path where the uWSGI configuration file is generated (default to a
-    file called ``name of the part.output-format`` in the parts directory).
+    Path where the uWSGI configuration file is generated (defaults to a
+    file called ``{name of the part}.{output-format}`` in the parts directory).
 
 output-format
     What kind of uWSGI configuration file to generate (``xml`` or ``ini``).
