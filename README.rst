@@ -10,6 +10,11 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.1.0
+
+* Merged some documentation fixes
+* Merged fixes for format strings (python 2.6)
+
 0.0.25
 
 * Added a new configuration option ``output-format`` which can be used to specify what kind of configuration file to create
