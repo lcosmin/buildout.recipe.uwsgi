@@ -4,8 +4,8 @@ import codecs
 setup(
     name="buildout.recipe.uwsgi",
     version="0.1.0",
-    description="Buildout recipe downloading, compiling and configuring uWSGI.",
-    long_description = codecs.open('README.rst', 'r', 'utf-8').read(),
+    description="Buildout recipe for downloading, compiling and configuring uWSGI",
+    long_description = codecs.open("README.rst", encoding="utf-8").read(),
     author="Cosmin Luță",
     author_email="q4break@gmail.com",
     license="BSD",
