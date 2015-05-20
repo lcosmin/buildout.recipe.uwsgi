@@ -1,11 +1,11 @@
 # coding: utf-8
 from setuptools import setup, find_packages
-
+import codecs
 setup(
     name="buildout.recipe.uwsgi",
     version="0.1.0",
     description="Buildout recipe downloading, compiling and configuring uWSGI.",
-    long_description = open("README.rst", "r").read(),
+    long_description = codecs.open('README.rst', 'r', 'utf-8').read(),
     author="Cosmin Luță",
     author_email="q4break@gmail.com",
     license="BSD",
