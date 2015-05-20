@@ -10,6 +10,11 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.1.1
+
+* Fixed encoding-related exception when building in an environment without the `LANG`, `LC_*`
+  variables set (issue #25)
+
 0.1.0
 
 * Merged some documentation fixes
@@ -114,7 +119,7 @@ Running the buildout will download and compile uWSGI and add an executable with 
 ``uwsgi`` can then be started like::
 
     $ ./bin/uwsgi --xml parts/uwsgi/uwsgi.xml
-    
+
 By configuring the ``output-format`` option, you can select other configuration file formats, such as ``ini``.
 
 Configuration options
@@ -202,5 +207,6 @@ Contributors
 #. `apoh <https://github.com/apoh>`_
 #. `Jeff Dairiki <https://github.com/dairiki>`_
 #. `wiseteck <https://github.com/wiseteck>`_
+#. `Bernardo Torres <https://github.com/bernardotorres>`_
 
 .. _uWSGI: http://projects.unbit.it/uwsgi/wiki/Doc
