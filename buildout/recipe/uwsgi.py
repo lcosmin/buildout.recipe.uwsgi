@@ -9,7 +9,7 @@ from zc.buildout.download import Download
 import zc
 import zc.recipe.egg
 
-DOWNLOAD_URL = "http://projects.unbit.it/downloads/uwsgi-{0}.tar.gz"
+DOWNLOAD_URL = "https://projects.unbit.it/downloads/uwsgi-{0}.tar.gz"
 MARKER = object()
 
 

@@ -10,6 +10,10 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
+0.1.2 (unreleased)
+
+* Change download URL to ``https://``.
+
 0.1.1
 
 * Fixed encoding-related exception when building in an environment without the `LANG`, `LC_*`
