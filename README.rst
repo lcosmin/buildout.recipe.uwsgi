@@ -1,3 +1,9 @@
+Unmaintained
+============
+
+Due to lack of time, I'm unable to maintain this project anymore. If anyone is interested in taking over, feel free to contact me. 
+
+
 buildout.recipe.uwsgi
 =====================
 
