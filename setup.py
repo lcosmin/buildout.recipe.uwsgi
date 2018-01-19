@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 import codecs
 setup(
     name="buildout.recipe.uwsgi",
-    version="0.1.1",
+    version="0.1.2",
     description="Buildout recipe for downloading, compiling and configuring uWSGI",
     long_description = codecs.open("README.rst", encoding="utf-8").read(),
     author="Cosmin Luță",

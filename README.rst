@@ -10,7 +10,7 @@ Forked from `shaunsephton.recipe.uwsgi <https://github.com/shaunsephton/shaunsep
 Changelog
 =========
 
-0.1.2 (unreleased)
+0.1.2
 
 * Change download URL to ``https://``.
 * Fixed incorrect working of ``is_uwsgi_installed()`` under Python 3 (issue #29)
