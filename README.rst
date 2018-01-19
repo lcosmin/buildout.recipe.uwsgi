@@ -1,9 +1,3 @@
-Unmaintained
-============
-
-Due to lack of time, I'm unable to maintain this project anymore. If anyone is interested in taking over, feel free to contact me. 
-
-
 buildout.recipe.uwsgi
 =====================
 
@@ -19,6 +13,7 @@ Changelog
 0.1.2 (unreleased)
 
 * Change download URL to ``https://``.
+* Fixed incorrect working of ``is_uwsgi_installed()`` under Python 3 (issue #29)
 
 0.1.1
 

@@ -52,7 +52,7 @@ class UWSGI:
         # xml, ini
         self.config_file_format = options.get("output-format", "xml").lower()
         if self.config_file_format not in ["xml", "ini"]:
-            self.log.warn("unknown output configuration format, defaulting to xml")
+            self.log.warning("unknown output configuration format, defaulting to xml")
             self.config_file_format = "xml"
 
         if "extra-paths" in options:
@@ -157,7 +157,8 @@ class UWSGI:
 
             if key.startswith("xml-") and len(key) > 4:
                 if not warned:
-                    self.log.warn("using 'xml-' options has been deprecated in favor of 'config-'. See documentation for details.")
+                    self.log.warning("using 'xml-' options has been deprecated in favor of 'config-'. "
+                                     "See documentation for details.")
                     warned = True
 
                 key = key[4:]
@@ -230,7 +231,7 @@ class UWSGI:
         # Check the version
         process = subprocess.Popen([self.uwsgi_binary_path, '--version'],
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+                                   stderr=subprocess.PIPE, universal_newlines=True)
         stdout, stderr = process.communicate()
         return stdout.strip() == self.uwsgi_version
 
